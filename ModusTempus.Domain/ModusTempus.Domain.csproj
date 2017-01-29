@@ -11,6 +11,21 @@
     <AssemblyName>ModusTempus.Domain</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -56,14 +71,27 @@
     <Compile Include="Entities\Group.cs" />
     <Compile Include="Entities\Permission.cs" />
     <Compile Include="Entities\Record.cs" />
+    <Compile Include="Entities\Subscription.cs" />
     <Compile Include="Entities\User.cs" />
     <Compile Include="Migrations\201701231618212_Initial.cs" />
     <Compile Include="Migrations\201701231618212_Initial.Designer.cs">
       <DependentUpon>201701231618212_Initial.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201701231700202_Permission-Type.cs" />
-    <Compile Include="Migrations\201701231700202_Permission-Type.Designer.cs">
-      <DependentUpon>201701231700202_Permission-Type.cs</DependentUpon>
+    <Compile Include="Migrations\201701281911182_V2.cs" />
+    <Compile Include="Migrations\201701281911182_V2.Designer.cs">
+      <DependentUpon>201701281911182_V2.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201701282005194_CascadeDelete.cs" />
+    <Compile Include="Migrations\201701282005194_CascadeDelete.Designer.cs">
+      <DependentUpon>201701282005194_CascadeDelete.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201701282107464_Permissions.cs" />
+    <Compile Include="Migrations\201701282107464_Permissions.Designer.cs">
+      <DependentUpon>201701282107464_Permissions.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201701291051541_Final.cs" />
+    <Compile Include="Migrations\201701291051541_Final.Designer.cs">
+      <DependentUpon>201701291051541_Final.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Context.cs" />
@@ -73,13 +101,19 @@
       <DependentUpon>Model.edmx</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Repositories\ActivityRepository.cs" />
+    <Compile Include="Repositories\GroupRepository.cs" />
     <Compile Include="Repositories\IRepository.cs" />
     <Compile Include="Repositories\BaseRepository.cs" />
+    <Compile Include="Repositories\PermissionRepository.cs" />
+    <Compile Include="Repositories\RecordRepository.cs" />
+    <Compile Include="Repositories\SubscriptionRepository.cs" />
     <Compile Include="Repositories\UserRepository.cs" />
     <Compile Include="Services\HashingService.cs" />
     <Compile Include="Services\LoggingService.cs" />
     <Compile Include="ValueObjects\PermissionType.cs" />
     <Compile Include="ValueObjects\Statistic.cs" />
+    <Compile Include="ValueObjects\TimeUnit.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -93,9 +127,30 @@
     <EmbeddedResource Include="Migrations\201701231618212_Initial.resx">
       <DependentUpon>201701231618212_Initial.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201701231700202_Permission-Type.resx">
-      <DependentUpon>201701231700202_Permission-Type.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201701281911182_V2.resx">
+      <DependentUpon>201701281911182_V2.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201701282005194_CascadeDelete.resx">
+      <DependentUpon>201701282005194_CascadeDelete.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201701282107464_Permissions.resx">
+      <DependentUpon>201701282107464_Permissions.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201701291051541_Final.resx">
+      <DependentUpon>201701291051541_Final.cs</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include=".NETFramework,Version=v4.5.2">
+      <Visible>False</Visible>
+      <ProductName>Microsoft .NET Framework 4.5.2 %28x86 and x64%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

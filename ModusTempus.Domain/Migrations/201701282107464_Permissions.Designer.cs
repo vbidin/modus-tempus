@@ -7,13 +7,13 @@ namespace ModusTempus.Domain.Migrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.1.3-40302")]
-    public sealed partial class PermissionType : IMigrationMetadata
+    public sealed partial class Permissions : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(PermissionType));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(Permissions));
         
         string IMigrationMetadata.Id
         {
-            get { return "201701231700202_Permission-Type"; }
+            get { return "201701282107464_Permissions"; }
         }
         
         string IMigrationMetadata.Source

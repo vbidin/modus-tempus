@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
 using System.Text;
 using ModusTempus.Domain.Services;
 using ModusTempus.Domain.ValueObjects;
@@ -29,7 +30,7 @@ namespace ModusTempus.Domain.Entities
 		[Required]
 		public bool Administrator { get; set; }
 
-		public virtual ICollection<Group> Subscriptions { get; set; }
+		public virtual ICollection<Subscription> Subscriptions { get; set; }
 
 		public virtual ICollection<Permission> Permissions { get; set; }
 
@@ -37,6 +38,11 @@ namespace ModusTempus.Domain.Entities
 
 		public User(string username, string email, string password)
 		{
+			if (username.Length > 20)
+				throw new ArgumentException("Cannot create user, username is too long (" + username.Length +")");
+			if (email.Length > 40)
+				throw new ArgumentException("Cannot create user, email is too long (" + email.Length + ")");
+
 			Username = username;
 			Email = email;
 
@@ -45,13 +51,16 @@ namespace ModusTempus.Domain.Entities
 			Password = hasher.GeneratePasswordHash(password + Salt);
 
 			Administrator = false;
+
+			Subscriptions = new List<Subscription>();
+			Permissions = new List<Permission>();
 		}
 
 		public bool Equals(User other)
 		{
 			var x = this as Entity;
 			var y = other as Entity;
-			return x == y;
+			return x.Equals(y);
 		}
 
 		public override string ToString()
@@ -61,7 +70,6 @@ namespace ModusTempus.Domain.Entities
 			sb.Append("Username: " + Username + ", ");
 			sb.Append("Email: " + Email + ", ");
 			sb.Append("Admin: " + Administrator);
-			sb.Append("\n");
 			return sb.ToString();
 		}
 
@@ -88,24 +96,30 @@ namespace ModusTempus.Domain.Entities
 
 		public Record CreateRecord(TimeSpan duration, Activity activity)
 		{
+			if (activity == null)
+				throw new ArgumentException("Cannot create record: activity is null.");
+
 			var group = activity.Group;
-			if (!Subscriptions.Contains(group))
-				throw new ArgumentException("Cannot post record to activity '" + activity + "': '" + this + "' is not subscribed to '" + group + "'.");
 			return new Record(duration, activity, this);
 		}
 
-		public void Subscribe(Group group)
+		public Subscription Subscribe(Group group)
 		{
-			if (Subscriptions.Contains(group))
+			if (Subscriptions.Select(s => s.Group).Contains(group))
 				throw new InvalidOperationException("Cannot subscribe to group '" + group.Name + "': '" + this + "' is already subscribed to it.");
-			Subscriptions.Add(group);
+			var sub = new Subscription(this, group);
+			Subscriptions.Add(sub);
+			group.Subscriptions.Add(sub);
+			return sub;
 		}
 
 		public void Unsubscribe(Group group)
 		{
-			if (!Subscriptions.Contains(group))
+			if (!Subscriptions.Select(s => s.Group).Contains(group))
 				throw new InvalidOperationException("Cannot unsubscribe from group '" + group.Name + "': '" + this + "' is not subscribed to it.");
-			Subscriptions.Remove(group);
+			var sub = Subscriptions.FirstOrDefault(s => s.Group.Equals(group));
+			Subscriptions.Remove(sub);
+			group.Subscriptions.Remove(sub);
 		}
 	}
 }

@@ -19,7 +19,7 @@ namespace ModusTempus.Domain.Entities
 		[Range(0, 3)]
 		public PermissionType DefaultPermission { get; set; }
 
-		public virtual ICollection<User> Subscribers { get; set; }
+		public virtual ICollection<Subscription> Subscriptions { get; set; }
 
 		public virtual ICollection<Permission> Permissions { get; set; }
 
@@ -30,28 +30,31 @@ namespace ModusTempus.Domain.Entities
 		public Group(string name)
 		{
 			Name = name;
-			DefaultPermission = PermissionType.None;
+			DefaultPermission = PermissionType.Read;
+
+			Subscriptions = new List<Subscription>();
+			Permissions = new List<Permission>();
+			Activities = new List<Activity>();
 		}
 
 		public bool Equals(Group other)
 		{
 			var x = this as Entity;
 			var y = other as Entity;
-			return x == y;
+			return x.Equals(y);
 		}
 
 		public override string ToString()
 		{
 			var sb = new StringBuilder();
 			sb.Append("Group: " + Id + ", ");
-			sb.Append("Name: " + Name + ", ");
-			sb.Append("\n");
+			sb.Append("Name: " + Name);
 			return sb.ToString();
 		}
 
 		public Permission CreatePermission(User user, PermissionType type)
 		{
-			var permission = Permissions.FirstOrDefault(p => p.User == user && p.Group == this);
+			var permission = Permissions.FirstOrDefault(p => p.User.Equals(user) && p.Group.Equals(this));
 
 			if (permission != null)
 				throw new InvalidOperationException("Cannot create permission for user '" + user + "': permission already exists.");
@@ -63,7 +66,7 @@ namespace ModusTempus.Domain.Entities
 
 		public void SetPermission(User user, PermissionType type)
 		{
-			var permission = Permissions.FirstOrDefault(p => p.User == user && p.Group == this);
+			var permission = Permissions.FirstOrDefault(p => p.User.Equals(user) && p.Group.Equals(this));
 
 			if (permission == null)
 				throw new InvalidOperationException("Cannot modify permission for user '" + user +"': permission does not exist.");
@@ -71,9 +74,10 @@ namespace ModusTempus.Domain.Entities
 			permission.Type = type;
 		}
 
-		public Activity CreateActivity(string name, DateTime start, TimeSpan duration)
+		public Activity CreateActivity(string name, Nullable<DateTime> start, TimeSpan duration)
 		{
 			var root = new Activity(name, start, duration, this);
+			Activities.Add(root);
 			return root;
 		}
 	}

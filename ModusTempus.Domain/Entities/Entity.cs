@@ -15,34 +15,24 @@ namespace ModusTempus.Domain.Entities
 
 		public override bool Equals(object obj)
 		{
-			return this == obj as Entity;
+			return Equals(obj as Entity);
 		}
 
 		public bool Equals(Entity other)
 		{
-			return this == other;
-		}
-
-		public static bool operator ==(Entity x, Entity y)
-		{
-			if (ReferenceEquals(x, y))
+			if (ReferenceEquals(this, other))
 				return true;
 
-			if (x == null || y == null)
+			if (other == null)
 				return false;
 
-			if (x.GetType() != y.GetType())
+			if (GetType() != other.GetType())
 				return false;
 
-			if (x.Id != y.Id)
+			if (Id != other.Id)
 				return false;
 
 			return true;
-		}
-
-		public static bool operator !=(Entity x, Entity y)
-		{
-			return !(x == y);
 		}
 	}
 }

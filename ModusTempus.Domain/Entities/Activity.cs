@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Text;
 using ModusTempus.Domain.ValueObjects;
 
 namespace ModusTempus.Domain.Entities
@@ -11,13 +12,14 @@ namespace ModusTempus.Domain.Entities
 		[MaxLength(40)]
 		public string Name { get; set; }
 
-		public DateTime Start { get; set; }
+		public Nullable<DateTime> Start { get; set; }
 
 		public TimeSpan Duration { get; set; }
 
-		[Required]
+		public long GroupId { get; set; }
 		public Group Group { get; set; }
 
+		public Nullable<long> ParentId { get; set; }
 		public Activity Parent { get; set; }
 
 		public ICollection<Activity> Children { get; set; }
@@ -26,19 +28,38 @@ namespace ModusTempus.Domain.Entities
 
 		private Activity() {}
 
-		public Activity(string name, DateTime start, TimeSpan duration, Group group)
+		public Activity(string name, Nullable<DateTime> start, TimeSpan duration, Group group)
 		{
 			Name = name;
 			Start = start;
 			Duration = duration;
 			Group = group;
+
+			Children = new List<Activity>();
+			Records = new List<Record>();
+		}
+
+		public Activity(string name, Nullable<DateTime> start, TimeSpan duration, long groupId)
+		{
+			Name = name;
+			Start = start;
+			Duration = duration;
+			GroupId = groupId;
 		}
 
 		public bool Equals(Activity other)
 		{
 			var x = this as Entity;
 			var y = other as Entity;
-			return x == y;
+			return x.Equals(y);
+		}
+
+		public override string ToString()
+		{
+			var sb = new StringBuilder();
+			sb.Append("Activity: " + Id + ", ");
+			sb.Append("Name: " + Name);
+			return sb.ToString();
 		}
 
 		public Activity CreateParent(string name, DateTime start, TimeSpan duration)
@@ -61,12 +82,6 @@ namespace ModusTempus.Domain.Entities
 			var child = new Activity(name, start, duration, Group);
 			child.Parent = this;
 			return child;
-		}
-
-		public Statistic GenerateStatistic()
-		{
-			// Create a new statistic for this activity here.
-			return null;
 		}
 	}
 }

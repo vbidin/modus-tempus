@@ -10,10 +10,10 @@ namespace ModusTempus.Domain.Entities
 		[Range(0, 3)]
 		public PermissionType Type { get; set; }	
 
-		[Required]
+		public long UserId { get; set; }
 		public User User { get; set; }
 
-		[Required]
+		public long GroupId { get; set; }
 		public Group Group { get; set; }
 
 		private Permission() {}
@@ -25,11 +25,18 @@ namespace ModusTempus.Domain.Entities
 			Type = type;
 		}
 
+		public Permission(long userId, long groupId, PermissionType type)
+		{
+			UserId = userId;
+			GroupId = groupId;
+			Type = type;
+		}
+
 		public bool Equals(Permission other)
 		{
 			var x = this as Entity;
 			var y = other as Entity;
-			return x == y;
+			return x.Equals(y);
 		}
 	}
 }

@@ -13,9 +13,11 @@ namespace ModusTempus.Domain.Entities
 		public TimeSpan Duration { get; set; }
 
 		[Required]
+		public long ActivityId { get; set; }
 		public Activity Activity { get; set; }
 
 		[Required]
+		public long CreatorId { get; set; }
 		public User Creator { get; set; }
 
 		private Record() { }
@@ -28,11 +30,19 @@ namespace ModusTempus.Domain.Entities
 			Creator = creator;
 		}
 
+		public Record(TimeSpan duration, long activityId, long creatorId)
+		{
+			Timestamp = DateTime.Now;
+			Duration = duration;
+			ActivityId = activityId;
+			CreatorId = creatorId;
+		}
+
 		public bool Equals(Record other)
 		{
 			var x = this as Entity;
 			var y = other as Entity;
-			return x == y;
+			return x.Equals(y);
 		}
 	}
 }
