@@ -121,6 +121,10 @@ namespace ModusTempus.GUI.Group
 			if (SelectedGroup == null)
 				return;
 
+			string name = SelectedGroup.Name;
+			LoadGroups();
+			SelectGroup(name);
+
 			new GroupRepository().Delete(SelectedGroup);
 			SelectedGroup = null;
 			LoadGroups();
